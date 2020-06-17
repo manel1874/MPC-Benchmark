@@ -70,7 +70,7 @@ PartyOne::PartyOne(int argc, char* argv[]) : MPCProtocol("SemiHonestYao", argc, 
     circuit = new GarbledBooleanCircuitNoIntrinsics(yao_config.circuit_file.c_str());
 #else
     circuit = GarbledCircuitFactory::createCircuit(yao_config.circuit_file,
-		                GarbledCircuitFactory::CircuitType::FIXED_KEY_FREE_XOR_HALF_GATES, false);
+		                GarbledCircuitFactory::CircuitType::FIXED_KEY_STANDARD, false);
 #endif
 
 	setInputs(yao_config.input_file_1, circuit->getNumberOfInputs(1));
@@ -182,7 +182,7 @@ PartyTwo::PartyTwo(int argc, char* argv[]) : MPCProtocol("SemiHonestYao", argc, 
     circuit = new GarbledBooleanCircuitNoIntrinsics(yao_config.circuit_file.c_str());
 #else
     circuit = GarbledCircuitFactory::createCircuit(yao_config.circuit_file,
-                                                   GarbledCircuitFactory::CircuitType::FIXED_KEY_FREE_XOR_HALF_GATES, false);
+                                                   GarbledCircuitFactory::CircuitType::FIXED_KEY_STANDARD, false);
 #endif
 	setInputs(yao_config.input_file_2,  circuit->getNumberOfInputs(2));
 	// create the OT receiver.
