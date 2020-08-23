@@ -1,1 +1,1 @@
-../../SemiHonestYao -partyID 0 -configFile sumYaoConfig.txt -partiesFile sumParties -internalIterationsNumber 1
+../../SemiHonestYao -partyID 0 -configFile YaoConfig.txt -partiesFile Parties -internalIterationsNumber 1

@@ -1,22 +1,30 @@
 #! /bin/bash
 
-
 echo "Let us start" 
 
-../CBMC-GC-2/bin/cbmc-gc --minimization-time-limit 30 --function mpc_main main.c
+~/CBMC-GC-2/bin/cbmc-gc --minimization-time-limit 150 --function mpc_main main.c
 echo "cbmc-gc circuit generated"
 
-../CBMC-GC-2/bin/circuit-utils --as-bristol mainBristol.txt
+~/CBMC-GC-2/bin/circuit-utils --as-bristol mainBristol.txt
 echo "bristol circuit generated"
 
-cp mainBristol.txt ../libscapi/tools/circuits/scapiBristolConverter
+cp mainBristol.txt ~/libscapi/tools/circuits/scapiBristolConverter
 echo "moved bristol circuit to convert to scapi"
 
-cd ../libscapi/tools/circuits/scapiBristolConverter
-./scapiBristolConverter bristol_to_scapi mainBristol.txt mainScapi.txt 2 true
+~/libscapi/tools/circuits/scapiBristolConverter/scapiBristolConverter bristol_to_scapi mainBristol.txt mainScapi.txt 2 true
 echo "scapi circuit generated"
 
-mv mainScapi.txt ~/MPC-Benchmark/SemiHonestYao
+rm ~/libscapi/tools/circuits/scapiBristolConverter/mainBristol.txt
 rm mainBristol.txt
+
+rm output.constants.txt
+rm output.gate.txt
+rm output.inputs.partyA.txt
+rm output.inputs.partyB.txt
+rm output.inputs.txt
+rm output.mapping.txt
+rm output.numberofgates.txt
+rm output.spec.txt
+rm output.stats.txt
 
  

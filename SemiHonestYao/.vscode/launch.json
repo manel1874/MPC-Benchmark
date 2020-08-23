@@ -6,13 +6,14 @@
     "configurations": [
 
 
+
     
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/SemiHonestYao",
-            "args": ["-partyID", "0",
+            "args": ["-partyID", "1",
                 "-configFile", "YaoConfigMillionaire.txt",
                 "-partiesFile", "Parties",
                 "-internalIterationsNumber", "1"],
