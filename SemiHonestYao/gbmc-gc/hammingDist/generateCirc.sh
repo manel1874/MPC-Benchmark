@@ -2,7 +2,7 @@
 
 echo "Let us start" 
 
-~/CBMC-GC-2/bin/cbmc-gc --minimization-time-limit 150 --function mpc_main main.c
+~/CBMC-GC-2/bin/cbmc-gc --unwind 50000 --minimization-time-limit 750 --function mpc_main main.c
 echo "cbmc-gc circuit generated"
 
 ~/CBMC-GC-2/bin/circuit-utils --as-bristol mainBristol.txt

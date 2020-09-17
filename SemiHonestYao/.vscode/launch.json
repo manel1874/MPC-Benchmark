@@ -14,7 +14,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/SemiHonestYao",
             "args": ["-partyID", "1",
-                "-configFile", "YaoConfigMillionaire.txt",
+                "-configFile", "YaoConfig.txt",
                 "-partiesFile", "Parties",
                 "-internalIterationsNumber", "1"],
             "stopAtEntry": false,

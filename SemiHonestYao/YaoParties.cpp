@@ -241,6 +241,8 @@ void PartyTwo::runOnline() {
 	// Compute the circuit.
 	computeCircuit(output.get());
 
+
+
 	// we're done print the output
 	if (print_output)
 	{
@@ -249,6 +251,14 @@ void PartyTwo::runOnline() {
 		for (int i = 0; i < outputSize; i++)
 			cout << (int)circuitOutput[i];
 		cout << endl;
+
+		// save output to file - by Manuel Santos - 17 Sept 2020
+		ofstream file_;
+		file_.open("output_file.txt");
+		for (int i = outputSize - 1; i >= 0; i--)
+			file_ << (int)circuitOutput[i];
+		file_.close();
+		// save output to file - by Manuel Santos - 17 Sept 2020
 	}
 }
 
