@@ -1,6 +1,8 @@
 input1 = [3,2,2,1,1,1,3,2,3,0,3,1]
 
-filename = 'Charlie_1_seq.txt'
+seq_number = "1_seq.txt"
+
+filename = 'Party_2_' + seq_number
 
 def print_zero(filename):
     with open(filename, 'a+') as file_object:
@@ -57,4 +59,18 @@ for elem in input1:
         print_three(filename)
 
 
+YaoConfig = """print_output = true
+input_section = AES
+circuit_type = NoFixedKey
+
+# OS name is added automatically
+[AES-Linux]
+circuit_file = mainScapi.txt
+input_file_party_1 = Inputs/"""+filename+"""
+input_file_party_2 = Inputs/"""+filename
+
+file_object = open("../YaoConfig_" + seq_number, "w")
+file_object.write(YaoConfig)
+
+file_object.close()
 

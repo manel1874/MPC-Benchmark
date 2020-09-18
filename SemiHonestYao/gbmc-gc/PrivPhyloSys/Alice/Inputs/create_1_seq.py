@@ -2,7 +2,7 @@ input1 = [0,3,1,2,3,2,2,3,0,1,3,2]
 
 seq_number = "1_seq.txt"
 
-filename = 'Alice_' + seq_number
+filename = 'Party_0_' + seq_number
 
 def print_zero(filename):
     with open(filename, 'a+') as file_object:
