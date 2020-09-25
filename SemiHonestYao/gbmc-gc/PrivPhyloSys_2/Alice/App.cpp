@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <fstream>
+
+#include "/home/manel/libscapi/include/comm/Comm.hpp"
+#include "/home/manel/libscapi/include/infra/ConfigFile.hpp"
+
+#include "include/HamParties.hpp"
+
+
+int main(int argc, char* argv[])
+{
+
+    //Initialization
+
+    int numOfParties = 3;
+    int partyNum = atoi(argv[1]);
+
+    shared_ptr<HamParty> meHamParty = make_shared<HamParty>(partyNum, numOfParties);
+
+    cout<<"After HamParty"<<endl;
+
+    // Run Hamming SMC between every party present
+
+    meHamParty->runHamSMC();
+
+
+    // Send (Evaluator) or Receive (Garbler) the results from Hamming SMC
+
+
+    // Compute internal Hamming distances
+
+
+    // Send / Receive the other values
+
+    return 0;
+
+}
+
+
+
