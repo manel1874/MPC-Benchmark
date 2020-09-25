@@ -15,8 +15,9 @@ int main(int argc, char* argv[])
 
     int numOfParties = 3;
     int partyNum = atoi(argv[1]);
+    int numOfInputs = 1;
 
-    shared_ptr<HamParty> meHamParty = make_shared<HamParty>(partyNum, numOfParties);
+    shared_ptr<HamParty> meHamParty = make_shared<HamParty>(partyNum, numOfParties, numOfInputs);
 
     cout<<"After HamParty"<<endl;
 
