@@ -43,9 +43,9 @@ HamParty::HamParty(int id, int numOfParties, int numOfInputs)
         yaoConfigFile << "\n";
         yaoConfigFile << "# OS name is added automatically\n";
         yaoConfigFile << "[AES-Linux]\n";
-        yaoConfigFile << "circuit_file = mainScapi.txt\n";
-        yaoConfigFile << "input_file_party_1 = inputs/Party_" + to_string(id) + "_seq_" + to_string(i) + ".txt\n";
-        yaoConfigFile << "input_file_party_1 = inputs/Party_" + to_string(id) + "_seq_" + to_string(i) + ".txt\n";
+        yaoConfigFile << "circuit_file = boolCircuit/mainScapi.txt\n";
+        yaoConfigFile << "input_file_party_1 = inputFiles/Party_" + to_string(id) + "_seq_" + to_string(i) + ".txt\n";
+        yaoConfigFile << "input_file_party_1 = inputFiles/Party_" + to_string(id) + "_seq_" + to_string(i) + ".txt\n";
 
         yaoConfigFile.close();
     }
@@ -87,7 +87,7 @@ void HamParty::runHamSMC()
 
             // Run SMC between evaluator and garbler
             std::string run_script = "./runSMCParty.sh ";
-            run_script += to_string(partyNum);
+            run_script += to_string(1);
             run_script += " yaoConfigFiles/YaoConfig.txt ";
             run_script += partiesFile_name;
 
@@ -125,7 +125,7 @@ void HamParty::runHamSMC()
 
             // Run Yao protocol =======
             std::string run_script = "./runSMCParty.sh ";
-            run_script += to_string(partyNum);
+            run_script += to_string(0);
             run_script += " yaoConfigFiles/YaoConfig.txt ";
             run_script += partiesFile_name;
             cout << "Running Yao protocol between my port "<< myPort << " and other port "<< otherPort <<endl;
