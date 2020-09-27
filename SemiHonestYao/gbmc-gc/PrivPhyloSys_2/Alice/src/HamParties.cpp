@@ -53,6 +53,13 @@ HamParty::HamParty(int id, int numOfParties, int numOfInputs)
 
 }
 
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
+
+//                                      RUN HAMMING SMC BETWEEN TWO PARTOES
+
+
+
 void HamParty::runHamSMC()
 {
 
@@ -85,7 +92,7 @@ void HamParty::runHamSMC()
 
             // TODO: two for cycle here for each YaoConfig
 
-            // Run SMC between evaluator and garbler
+            // Run SMC between evaluator and garbler=======
             std::string run_script = "./runSMCParty.sh ";
             run_script += to_string(1);
             run_script += " yaoConfigFiles/YaoConfig.txt ";
@@ -95,6 +102,7 @@ void HamParty::runHamSMC()
             system(run_script.c_str());
             cout <<"Finnished Yao protocol"<<endl;
             cout <<"\n"<<endl;
+            // ============================================
 
             // Rename output file =====
             std::string newYaoOutputFileName = "results/out_myseq_0_";
@@ -140,7 +148,100 @@ void HamParty::runHamSMC()
 
     }
 
-
-
 };
 
+//                                      RUN HAMMING SMC BETWEEN TWO PARTOES
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
+
+
+
+
+void HamParty::evaluatorSendResultToGarbler()
+{
+    int partyNum = this->id;
+    int numOfParties = this->numOfParties;
+
+    vector<int> ports = this->ports;
+    vector<string> ips = this->ips;
+
+    SocketPartyData me, other;
+    boost::asio::io_service io_service;
+
+    for(int i=0; i < numOfParties; i++)
+    {
+        if(i < partyNum)
+        {// Evaluator - Send result
+
+            int myPort = ports[partyNum] + i*10;
+            int otherPort = ports[i] + partyNum*10 - 10;
+
+            
+            cout <<"SEND RESULTS"<<endl;
+            me = SocketPartyData(boost_ip::address::from_string(ips[partyNum]), myPort);
+            cout<<"my port = "<< myPort <<endl;
+            other = SocketPartyData(boost_ip::address::from_string(ips[i]), otherPort);
+            cout<<"other port = "<< otherPort <<endl;
+
+            shared_ptr<CommParty> channel = make_shared<CommPartyTCPSynced>(io_service, me, other);
+            // connect to party i
+            channel->join(500, 5000);
+            cout<<"channel established"<<endl;
+            
+            // read from newYaoOutputFileName file
+            std::string newYaoOutputFileName = "results/out_myseq_0_";
+            newYaoOutputFileName += "otherparty_";
+            newYaoOutputFileName += to_string(i); 
+            newYaoOutputFileName += "_otherseq_1.txt";
+
+            ifstream yaoOutput(newYaoOutputFileName);
+            std::string yaoResult;
+            std::getline(yaoOutput, yaoResult);
+
+            channel->writeWithSize(yaoResult); // TODO: Encrypt the communication
+            
+
+
+        }else if(i > partyNum)
+        {// Garbler - Receive result
+            
+            int myPort = ports[partyNum] + i*10 - 10;
+            int otherPort = ports[i] + partyNum*10;
+
+            
+            cout <<"RECEIVE RESULTS"<<endl;
+            me = SocketPartyData(boost_ip::address::from_string(ips[partyNum]), myPort);
+            cout<<"my port = "<<myPort<<endl;
+            other = SocketPartyData(boost_ip::address::from_string(ips[i]), otherPort);
+            cout<<"other port = "<<otherPort<<endl;
+
+            shared_ptr<CommParty> channel = make_shared<CommPartyTCPSynced>(io_service, me, other);
+            // connect to party i
+            channel->join(500, 5000);
+            cout<<"channel established"<<endl;
+
+            // process
+            string yaoResult;
+            vector<byte> raw_yaoResult;
+            channel->readWithSizeIntoVector(raw_yaoResult); // TODO: Encrypt the communication
+            const byte * uc = &(raw_yaoResult[0]);
+            yaoResult = string(reinterpret_cast<char const *>(uc), raw_yaoResult.size());
+
+            // save to file
+            ofstream yaoOutputFile;
+
+            std::string YaoOutputFileName = "results/out_myseq_1_";
+            YaoOutputFileName += "otherparty_";
+            YaoOutputFileName += to_string(i); 
+            YaoOutputFileName += "_otherseq_1.txt";
+            
+            yaoOutputFile.open(YaoOutputFileName);
+            yaoOutputFile << yaoResult;
+            yaoOutputFile.close();
+            
+
+
+        }
+    }
+
+}

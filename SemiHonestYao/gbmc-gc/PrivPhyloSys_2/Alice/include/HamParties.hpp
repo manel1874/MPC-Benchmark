@@ -30,6 +30,8 @@ public:
 
     void runHamSMC();
 
+    void evaluatorSendResultToGarbler();
+
     //vector<vector<int>> mat(int numOfcols, vector<int>(numOfrows)); // Definir a matrix!
 
 

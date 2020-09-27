@@ -22,12 +22,10 @@ int main(int argc, char* argv[])
     cout<<"After HamParty"<<endl;
 
     // Run Hamming SMC between every party present
-
     meHamParty->runHamSMC();
 
-
     // Send (Evaluator) or Receive (Garbler) the results from Hamming SMC
-
+    meHamParty->evaluatorSendResultToGarbler();
 
     // Compute internal Hamming distances
 
