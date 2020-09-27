@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
+#include <boost/filesystem.hpp>
 
 #include "/home/manel/libscapi/include/comm/Comm.hpp"
 #include "/home/manel/libscapi/include/infra/ConfigFile.hpp"

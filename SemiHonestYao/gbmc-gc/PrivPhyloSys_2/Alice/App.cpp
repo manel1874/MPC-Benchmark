@@ -15,11 +15,13 @@ int main(int argc, char* argv[])
 
     int numOfParties = 3;
     int partyNum = atoi(argv[1]);
-    int numOfInputs = 1;
+    int numOfInputs = atoi(argv[2]);
 
     shared_ptr<HamParty> meHamParty = make_shared<HamParty>(partyNum, numOfParties, numOfInputs);
 
     cout<<"After HamParty"<<endl;
+
+    // Send number of inputs to other parties
 
     // Run Hamming SMC between every party present
     meHamParty->runHamSMC();

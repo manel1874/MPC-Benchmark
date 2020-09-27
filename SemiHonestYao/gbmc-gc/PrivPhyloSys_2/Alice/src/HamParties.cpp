@@ -45,7 +45,7 @@ HamParty::HamParty(int id, int numOfParties, int numOfInputs)
         yaoConfigFile << "[AES-Linux]\n";
         yaoConfigFile << "circuit_file = boolCircuit/mainScapi.txt\n";
         yaoConfigFile << "input_file_party_1 = inputFiles/Party_" + to_string(id) + "_seq_" + to_string(i) + ".txt\n";
-        yaoConfigFile << "input_file_party_1 = inputFiles/Party_" + to_string(id) + "_seq_" + to_string(i) + ".txt\n";
+        yaoConfigFile << "input_file_party_2 = inputFiles/Party_" + to_string(id) + "_seq_" + to_string(i) + ".txt\n";
 
         yaoConfigFile.close();
     }
@@ -90,27 +90,38 @@ void HamParty::runHamSMC()
             PartiesFile.close();
             // ==============================================
 
-            // TODO: two for cycle here for each YaoConfig
+            // SMC for all inputs ------ DOING HERE!!!!!! parties have to send to the other elements the number of inputs they have!! Create new function in the App and introduce inside the class elements !!!!!
+           for(int j=0; j < numOfInputs; j++)
+           {// for each myInput
 
-            // Run SMC between evaluator and garbler=======
-            std::string run_script = "./runSMCParty.sh ";
-            run_script += to_string(1);
-            run_script += " yaoConfigFiles/YaoConfig.txt ";
-            run_script += partiesFile_name;
+           //TODO: define numOfOtherInputs && define from 101 till 119
 
-            cout << "Running Yao protocol between my port "<< myPort << " and other port "<< otherPort<<endl;
-            system(run_script.c_str());
-            cout <<"Finnished Yao protocol"<<endl;
-            cout <<"\n"<<endl;
-            // ============================================
+                for(int k=0; k < numOfOtherInputs; k++)
+                {
+                    // Run SMC between evaluator and garbler=======
+                    std::string run_script = "./runSMCParty.sh ";
+                    run_script += to_string(1);
+                    run_script += " yaoConfigFiles/YaoConfig.txt ";
+                    run_script += partiesFile_name;
 
-            // Rename output file =====
-            std::string newYaoOutputFileName = "results/out_myseq_0_";
-            newYaoOutputFileName += "otherparty_";
-            newYaoOutputFileName += to_string(i); 
-            newYaoOutputFileName += "_otherseq_1.txt";
-            rename("output_file.txt", newYaoOutputFileName.c_str());
-            // ========================
+                    cout << "Running Yao protocol between my port "<< myPort << " and other port "<< otherPort<<endl;
+                    system(run_script.c_str());
+                    cout <<"Finnished Yao protocol"<<endl;
+                    cout <<"\n"<<endl;
+                    // ============================================
+
+                    // Rename output file =====
+                    std::string newYaoOutputFileName = "results/out_myseq_0_";
+                    newYaoOutputFileName += "otherparty_";
+                    newYaoOutputFileName += to_string(i); 
+                    newYaoOutputFileName += "_otherseq_1.txt";
+                    rename("output_file.txt", newYaoOutputFileName.c_str());
+                    // ========================
+                }
+
+           }
+
+
 
         }else if(i > partyNum)
         {// Garbler 
@@ -245,3 +256,14 @@ void HamParty::evaluatorSendResultToGarbler()
     }
 
 }
+
+
+
+
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
+
+//                                                      Auxiliary functions
+
+
