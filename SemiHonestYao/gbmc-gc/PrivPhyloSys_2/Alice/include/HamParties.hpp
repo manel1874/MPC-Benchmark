@@ -22,12 +22,16 @@ public:
     int numOfParties;
     int numOfInputs;
 
+    vector<int> numOfInputsOtherParties;
+
     //ConfigFile configFile;
     
     vector<int> ports;
     vector<string> ips;
 
     vector<int> listOfRoles;
+
+    void runNumberOfInputs();
 
     void runHamSMC();
 

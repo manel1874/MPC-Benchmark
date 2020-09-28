@@ -3,10 +3,16 @@
 
 HamParty::HamParty(int id, int numOfParties, int numOfInputs)
 {
-    this->id = id;
+    this-> id = id;
     this-> numOfParties = numOfParties;
     this-> numOfInputs = numOfInputs;
 
+    
+    // Initialization
+    std::vector<int> numOfInputsOtherParties(numOfParties, 0);
+    numOfInputsOtherParties[id] = numOfInputs;
+    this->numOfInputsOtherParties = numOfInputsOtherParties;
+    
     
     // Extract ips and port vlaues
     ConfigFile cf("partiesFiles/Parties");
@@ -49,9 +55,107 @@ HamParty::HamParty(int id, int numOfParties, int numOfInputs)
 
         yaoConfigFile.close();
     }
-    cout<<"Inside HamParty!"<<endl;
 
 }
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
+
+//                                              SEND NUMBER OF INPUTS
+
+
+void HamParty::runNumberOfInputs()
+{
+    int partyNum = this->id;
+    int numOfParties = this->numOfParties;
+    int numOfInputs = this->numOfInputs;
+
+    vector<int> ports = this->ports;
+    vector<string> ips = this->ips;
+
+    SocketPartyData me, other;
+    boost::asio::io_service io_service;
+
+    for(int i=0; i < numOfParties; i++)
+    {
+        if(i < partyNum)
+        {// Evaluator - Send result
+
+            int myPort = ports[partyNum] + i*10;
+            int otherPort = ports[i] + partyNum*10 - 10;
+
+            
+            cout <<"SEND NUMBER OF INPUTS TO PARTY " + to_string(i) <<endl;
+            me = SocketPartyData(boost_ip::address::from_string(ips[partyNum]), myPort);
+            cout<<"my port = "<< myPort <<endl;
+            other = SocketPartyData(boost_ip::address::from_string(ips[i]), otherPort);
+            cout<<"other port = "<< otherPort <<endl;
+
+            shared_ptr<CommParty> channel = make_shared<CommPartyTCPSynced>(io_service, me, other);
+            // connect to party i
+            channel->join(500, 5000);
+            cout<<"channel established"<<endl;
+            
+            cout <<"RECEIVE NUMBER OF INPUTS FROM PARTY " + to_string(i) <<endl;
+            // send number of inputs
+            channel->writeWithSize(to_string(numOfInputs)); // TODO: Encrypt the communication
+
+            // Receive number of inputs from i
+            string numberOfInputsOtherParty;
+            vector<byte> raw_numberOfInputsOtherParty;
+            channel->readWithSizeIntoVector(raw_numberOfInputsOtherParty); // TODO: Encrypt the communication
+            const byte * uc = &(raw_numberOfInputsOtherParty[0]);
+            numberOfInputsOtherParty = string(reinterpret_cast<char const *>(uc), raw_numberOfInputsOtherParty.size());
+
+            this-> numOfInputsOtherParties[i] = stoi(numberOfInputsOtherParty);
+            
+
+
+        }else if(i > partyNum)
+        {// Garbler - Receive result
+            
+            int myPort = ports[partyNum] + i*10 - 10;
+            int otherPort = ports[i] + partyNum*10;
+
+            
+            cout <<"RECEIVE NUMBER OF INPUTS FROM PARTY " + to_string(i) <<endl;
+            me = SocketPartyData(boost_ip::address::from_string(ips[partyNum]), myPort);
+            cout<<"my port = "<<myPort<<endl;
+            other = SocketPartyData(boost_ip::address::from_string(ips[i]), otherPort);
+            cout<<"other port = "<<otherPort<<endl;
+
+            shared_ptr<CommParty> channel = make_shared<CommPartyTCPSynced>(io_service, me, other);
+            // connect to party i
+            channel->join(500, 5000);
+            cout<<"channel established"<<endl;
+
+            // Receive
+            string numberOfInputsOtherParty;
+            vector<byte> raw_numberOfInputsOtherParty;
+            channel->readWithSizeIntoVector(raw_numberOfInputsOtherParty); // TODO: Encrypt the communication
+            const byte * uc = &(raw_numberOfInputsOtherParty[0]);
+            numberOfInputsOtherParty = string(reinterpret_cast<char const *>(uc), raw_numberOfInputsOtherParty.size());
+
+            this-> numOfInputsOtherParties[i] = stoi(numberOfInputsOtherParty);
+
+            cout <<"SEND NUMBER OF INPUTS TO PARTY " + to_string(i) <<endl;
+            // send number of inputs
+            channel->writeWithSize(to_string(numOfInputs)); // TODO: Encrypt the communication
+
+            
+
+
+        }
+    }
+
+}
+
+
+
+
+
+
+
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
@@ -71,8 +175,12 @@ void HamParty::runHamSMC()
 
     for(int i=0; i < numOfParties; i++)
     {
+        int numOfInputsOtherParty = this->numOfInputsOtherParties[i];
+
         if(i < partyNum)
         {// Evaluator
+
+            cout << "EVALUATOR STARTING" << endl;
 
             int myPort = ports[partyNum] + i*10 - 10;
             int otherPort = ports[i] + partyNum*10;
@@ -90,41 +198,43 @@ void HamParty::runHamSMC()
             PartiesFile.close();
             // ==============================================
 
-            // SMC for all inputs ------ DOING HERE!!!!!! parties have to send to the other elements the number of inputs they have!! Create new function in the App and introduce inside the class elements !!!!!
-           for(int j=0; j < numOfInputs; j++)
-           {// for each myInput
+            // SMC for all inputs 
+            for(int j=0; j < numOfInputs; j++)
+            {// for each myInput
 
-           //TODO: define numOfOtherInputs && define from 101 till 119
-
-                for(int k=0; k < numOfOtherInputs; k++)
+                for(int k=0; k < numOfInputsOtherParty; k++)
                 {
+
+                    cout << "Computing hamming distance between myseq " + to_string(j) + " and otherseq " + to_string(k) << endl;
                     // Run SMC between evaluator and garbler=======
                     std::string run_script = "./runSMCParty.sh ";
                     run_script += to_string(1);
-                    run_script += " yaoConfigFiles/YaoConfig.txt ";
+                    run_script += " yaoConfigFiles/YaoConfig_seq_" + to_string(j) + ".txt ";
                     run_script += partiesFile_name;
 
-                    cout << "Running Yao protocol between my port "<< myPort << " and other port "<< otherPort<<endl;
-                    system(run_script.c_str());
-                    cout <<"Finnished Yao protocol"<<endl;
-                    cout <<"\n"<<endl;
+                    std::cout << "Running Yao protocol between my port "<< myPort << " and other port "<< otherPort <<endl;
+                    std::system(run_script.c_str());
+                    std::cout <<"Finnished Yao protocol"<<endl;
+                    std::cout <<"\n"<<endl;
                     // ============================================
 
                     // Rename output file =====
-                    std::string newYaoOutputFileName = "results/out_myseq_0_";
+                    std::string newYaoOutputFileName = "results/out_myseq_" + to_string(j) + "_";
                     newYaoOutputFileName += "otherparty_";
                     newYaoOutputFileName += to_string(i); 
-                    newYaoOutputFileName += "_otherseq_1.txt";
+                    newYaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
                     rename("output_file.txt", newYaoOutputFileName.c_str());
                     // ========================
                 }
 
-           }
+            }
 
 
 
         }else if(i > partyNum)
         {// Garbler 
+
+            cout << "GARBLER STARTING" << endl;
 
             int myPort = ports[partyNum] + i*10;
             int otherPort = ports[i] + partyNum*10 - 10;
@@ -142,16 +252,24 @@ void HamParty::runHamSMC()
             PartiesFile.close();
             // ========================
 
-            // Run Yao protocol =======
-            std::string run_script = "./runSMCParty.sh ";
-            run_script += to_string(0);
-            run_script += " yaoConfigFiles/YaoConfig.txt ";
-            run_script += partiesFile_name;
-            cout << "Running Yao protocol between my port "<< myPort << " and other port "<< otherPort <<endl;
-            system(run_script.c_str());
-            cout <<"Finnished Yao protocol"<<endl;
-            cout <<"\n"<<endl;
-            // ========================
+            // SMC for all inputs 
+            for(int k=0; k < numOfInputsOtherParty; k++)
+            {// for each myInput
+                for(int j=0; j < numOfInputs; j++)
+                {   
+                    cout << "Computing hamming distance between myseq " + to_string(j) + " and otherseq " + to_string(k) << endl;
+                    // Run Yao protocol =======
+                    std::string run_script = "./runSMCParty.sh ";
+                    run_script += to_string(0);
+                    run_script += " yaoConfigFiles/YaoConfig_seq_" + to_string(j) + ".txt ";
+                    run_script += partiesFile_name;
+                    cout << "Running Yao protocol between my port "<< myPort << " and other port "<< otherPort <<endl;
+                    system(run_script.c_str());
+                    cout <<"Finnished Yao protocol"<<endl;
+                    cout <<"\n"<<endl;
+                    // ========================
+                }
+            }
 
         }
 

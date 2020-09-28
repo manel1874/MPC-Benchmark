@@ -6,4 +6,4 @@ circuit_type = NoFixedKey
 [AES-Linux]
 circuit_file = boolCircuit/mainScapi.txt
 input_file_party_1 = inputFiles/Party_0_seq_0.txt
-input_file_party_1 = inputFiles/Party_0_seq_0.txt
+input_file_party_2 = inputFiles/Party_0_seq_0.txt

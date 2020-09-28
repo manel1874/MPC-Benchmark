@@ -19,15 +19,17 @@ int main(int argc, char* argv[])
 
     shared_ptr<HamParty> meHamParty = make_shared<HamParty>(partyNum, numOfParties, numOfInputs);
 
-    cout<<"After HamParty"<<endl;
-
+    cout << "PART 1 - NUMBER OF INPUTS \n" << endl;
     // Send number of inputs to other parties
+    meHamParty->runNumberOfInputs();
 
+    cout << "PART 2 - SMC \n" << endl;
     // Run Hamming SMC between every party present
     meHamParty->runHamSMC();
 
+    //cout << "PART 3 - SENDING RESULTS \n" << endl;
     // Send (Evaluator) or Receive (Garbler) the results from Hamming SMC
-    meHamParty->evaluatorSendResultToGarbler();
+   //meHamParty->evaluatorSendResultToGarbler();
 
     // Compute internal Hamming distances
 
