@@ -299,6 +299,8 @@ void HamParty::evaluatorSendResultToGarbler()
 
     for(int i=0; i < numOfParties; i++)
     {
+        int numOfInputsOtherParty = this->numOfInputsOtherParties[i];
+
         if(i < partyNum)
         {// Evaluator - Send result
 
@@ -316,18 +318,27 @@ void HamParty::evaluatorSendResultToGarbler()
             // connect to party i
             channel->join(500, 5000);
             cout<<"channel established"<<endl;
-            
-            // read from newYaoOutputFileName file
-            std::string newYaoOutputFileName = "results/out_myseq_0_";
-            newYaoOutputFileName += "otherparty_";
-            newYaoOutputFileName += to_string(i); 
-            newYaoOutputFileName += "_otherseq_1.txt";
 
-            ifstream yaoOutput(newYaoOutputFileName);
-            std::string yaoResult;
-            std::getline(yaoOutput, yaoResult);
+            // SMC for all inputs 
+            for(int j=0; j < numOfInputs; j++)
+            {// for each myInput
 
-            channel->writeWithSize(yaoResult); // TODO: Encrypt the communication
+                for(int k=0; k < numOfInputsOtherParty; k++)
+                {
+
+                    std::string newYaoOutputFileName = "results/out_myseq_" + to_string(j) + "_";
+                    newYaoOutputFileName += "otherparty_";
+                    newYaoOutputFileName += to_string(i); 
+                    newYaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+
+                    ifstream yaoOutput(newYaoOutputFileName);
+                    std::string yaoResult;
+                    std::getline(yaoOutput, yaoResult);
+
+                    channel->writeWithSize(yaoResult); // TODO: Encrypt the communication
+                }
+
+            }
             
 
 
@@ -349,25 +360,32 @@ void HamParty::evaluatorSendResultToGarbler()
             channel->join(500, 5000);
             cout<<"channel established"<<endl;
 
-            // process
-            string yaoResult;
-            vector<byte> raw_yaoResult;
-            channel->readWithSizeIntoVector(raw_yaoResult); // TODO: Encrypt the communication
-            const byte * uc = &(raw_yaoResult[0]);
-            yaoResult = string(reinterpret_cast<char const *>(uc), raw_yaoResult.size());
+            for(int k=0; k < numOfInputsOtherParty; k++)
+            {// for each myInput
+                for(int j=0; j < numOfInputs; j++)
+                {  
+                    // process
+                    string yaoResult;
+                    vector<byte> raw_yaoResult;
+                    channel->readWithSizeIntoVector(raw_yaoResult); // TODO: Encrypt the communication
+                    const byte * uc = &(raw_yaoResult[0]);
+                    yaoResult = string(reinterpret_cast<char const *>(uc), raw_yaoResult.size());
 
-            // save to file
-            ofstream yaoOutputFile;
+                    // save to file
+                    ofstream yaoOutputFile;
 
-            std::string YaoOutputFileName = "results/out_myseq_1_";
-            YaoOutputFileName += "otherparty_";
-            YaoOutputFileName += to_string(i); 
-            YaoOutputFileName += "_otherseq_1.txt";
+                    std::string YaoOutputFileName = "results/out_myseq_" + to_string(j) + "_";
+                    YaoOutputFileName += "otherparty_";
+                    YaoOutputFileName += to_string(i); 
+                    YaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+                    
+                    yaoOutputFile.open(YaoOutputFileName);
+                    yaoOutputFile << yaoResult;
+                    yaoOutputFile.close();
             
-            yaoOutputFile.open(YaoOutputFileName);
-            yaoOutputFile << yaoResult;
-            yaoOutputFile.close();
-            
+                }
+            }   
+
 
 
         }
