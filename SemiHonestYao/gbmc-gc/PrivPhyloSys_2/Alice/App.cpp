@@ -31,8 +31,10 @@ int main(int argc, char* argv[])
     // Send (Evaluator) or Receive (Garbler) the results from Hamming SMC
     meHamParty->evaluatorSendResultToGarbler();
 
+    
+    cout << "PART 4 - INTERNAL HAMMING DISTANCE" << endl;
     // Compute internal Hamming distances
-
+    meHamParty->computeInternalHammingDistance();
 
     // Send / Receive the other values
 

@@ -385,15 +385,53 @@ void HamParty::evaluatorSendResultToGarbler()
             
                 }
             }   
+        }
+    }
+}
 
 
+
+
+void HamParty::computeInternalHammingDistance()
+{
+    int numOfInputs = this->numOfInputs;
+    int id = this->id;
+
+    for(int i = 0; i < numOfInputs; i++)
+    {
+        for(int j = i + 1; j < numOfInputs; j++)
+        {
+
+            // Converto format
+            string filename_i = "inputFiles/Party_" + to_string(id) + "_seq_" + to_string(i) + ".txt";
+            string inputSeq_i;
+            inputSeq_i = preprocessInput(filename_i);
+
+            string filename_j = "inputFiles/Party_" + to_string(id) + "_seq_" + to_string(j) + ".txt";
+            string inputSeq_j;
+            inputSeq_j = preprocessInput(filename_j);
+
+            // Compute Hamming distance
+            int hamDist;
+            hamDist = hammingDistance(inputSeq_i, inputSeq_j);
+
+            // save to file
+            ofstream outputFile;
+
+            std::string outputFileName = "results/out_myseq_" + to_string(i) + "_";
+            outputFileName += "otherparty_";
+            outputFileName += to_string(id); 
+            outputFileName += "_otherseq_" + to_string(j) + ".txt";
+            
+            outputFile.open(outputFileName);
+            outputFile << hamDist;
+            outputFile.close();
 
         }
     }
 
+
 }
-
-
 
 
 
@@ -402,4 +440,66 @@ void HamParty::evaluatorSendResultToGarbler()
 
 //                                                      Auxiliary functions
 
+
+
+string preprocessInput(string path)
+{
+    
+    int numOfDigits = 0;
+    string sequence;
+    string element;
+
+    std::string line;    
+    ifstream inputFile(path);
+
+    string A = "00000000";
+    string C = "10000000";
+    string G = "01000000";
+    string T = "11000000";
+
+    while(std::getline(inputFile, line))
+    {
+        ++numOfDigits;
+        element += line;
+
+        if(numOfDigits == 8)
+        {
+            if(element == A)
+                sequence += "A";
+            if(element == C)
+                sequence += "C";
+            if(element == G)
+                sequence += "G";
+            if(element == T)
+                sequence += "T";
+            
+            numOfDigits = 0;
+            element = "";
+
+        }
+
+    }
+
+    return sequence;
+
+}
+
+
+int hammingDistance(string input_i, string input_j)
+{
+
+    int hamDist = 0;
+
+    int length;
+    length = input_i.length();
+    
+    
+    for(int i=0; i < length; i++)
+    {
+        if(input_i[i] != input_j[i])
+            hamDist++;
+    }
+
+    return hamDist;
+}
 
