@@ -390,6 +390,12 @@ void HamParty::evaluatorSendResultToGarbler()
 }
 
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
+
+//                                      RUN HAMMING SMC BETWEEN TWO PARTOES
+
+
+
 
 
 void HamParty::computeInternalHammingDistance()
@@ -434,6 +440,303 @@ void HamParty::computeInternalHammingDistance()
 }
 
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
+
+//                                      RUN HAMMING SMC BETWEEN TWO PARTOES
+
+
+
+
+void HamParty::sendAndReceiveOtherDistances()
+{
+
+    int partyNum = this->id;
+    int numOfParties = this->numOfParties;
+
+    vector<int> ports = this->ports;
+    vector<string> ips = this->ips;
+
+    SocketPartyData me, other;
+    boost::asio::io_service io_service;
+
+    for(int i=0; i < numOfParties; i++)
+    {
+        int numOfInputsOtherParty = this->numOfInputsOtherParties[i];
+
+        if(i < partyNum)
+        {// Evaluator - Send result
+
+            int myPort = ports[partyNum] + i*10;
+            int otherPort = ports[i] + partyNum*10 - 10;
+
+            
+            cout <<"SEND RESULTS"<<endl;
+            me = SocketPartyData(boost_ip::address::from_string(ips[partyNum]), myPort);
+            cout<<"my port = "<< myPort <<endl;
+            other = SocketPartyData(boost_ip::address::from_string(ips[i]), otherPort);
+            cout<<"other port = "<< otherPort <<endl;
+
+            shared_ptr<CommParty> channel = make_shared<CommPartyTCPSynced>(io_service, me, other);
+            // connect to party i
+            channel->join(500, 5000);
+            cout<<"channel established"<<endl;
+
+            cout << "EVALUATOR INTERNAL SENDING..." << endl;
+            // Send internal results
+            for(int j = 0; j < numOfInputs; j++)
+            {
+                for(int k = j + 1; k < numOfInputs; k++)
+                {   
+                    cout << "I AM SENDING..." << endl;
+                    std::string newYaoOutputFileName = "results/out_myseq_" + to_string(j) + "_";
+                    newYaoOutputFileName += "otherparty_";
+                    newYaoOutputFileName += to_string(partyNum); 
+                    newYaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+
+                    ifstream yaoOutput(newYaoOutputFileName);
+                    std::string yaoResult;
+                    std::getline(yaoOutput, yaoResult);
+
+                    channel->writeWithSize(yaoResult); // TODO: Encrypt the communication
+                    cout << "I SENT" << endl;
+                }
+            }
+
+            cout << "EVALUATOR RECEIVING..." << endl;
+            // Receive internal results
+            for(int j = 0; j < numOfInputsOtherParty; j++)
+            {
+                for(int k = j + 1; k < numOfInputsOtherParty; k++)
+                {
+                    // process
+                    string yaoResult;
+                    vector<byte> raw_yaoResult;
+                    channel->readWithSizeIntoVector(raw_yaoResult); // TODO: Encrypt the communication
+                    const byte * uc = &(raw_yaoResult[0]);
+                    yaoResult = string(reinterpret_cast<char const *>(uc), raw_yaoResult.size());
+
+                    // save to file
+                    ofstream yaoOutputFile;
+
+                    std::string YaoOutputFileName = "results/out_party_" + to_string(i) + "_";
+                    YaoOutputFileName += "seq_" + to_string(j);
+                    YaoOutputFileName += "_otherparty_";
+                    YaoOutputFileName += to_string(i); 
+                    YaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+                    
+                    yaoOutputFile.open(YaoOutputFileName);
+                    yaoOutputFile << yaoResult;
+                    yaoOutputFile.close();
+                }
+            }
+
+            cout << "EVALUATOR OTHER SENDING..." << endl;
+            // send other elements
+            for(int restOfParties = 0; restOfParties < numOfParties; restOfParties++)
+            {
+                int numOfInputsRestOfParties = this->numOfInputsOtherParties[restOfParties];
+
+                if(restOfParties != i && restOfParties != partyNum)
+                {
+                    for(int j = 0; j < numOfInputs; j++)
+                    {
+                        for(int k = 0; k < numOfInputsRestOfParties; k++)
+                        {
+                            cout << "Inside! j= " + to_string(j) + " and k= " + to_string(k) << endl;  
+                            std::string newYaoOutputFileName = "results/out_myseq_" + to_string(j) + "_";
+                            newYaoOutputFileName += "otherparty_";
+                            newYaoOutputFileName += to_string(restOfParties); 
+                            newYaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+
+                            cout << newYaoOutputFileName << endl;
+
+                            ifstream yaoOutput(newYaoOutputFileName);
+                            std::string yaoResult;
+                            std::getline(yaoOutput, yaoResult);
+
+                            channel->writeWithSize(yaoResult); // TODO: Encrypt the communication
+                        }
+                    }
+                }
+            }
+
+            // Receive rest of parties
+            for(int restOfParties = 0; restOfParties < numOfParties; restOfParties++)
+            {
+                int numOfInputsRestOfParties = this->numOfInputsOtherParties[restOfParties];
+                if(restOfParties != partyNum && restOfParties != i)
+                {
+                    for(int j = 0; j < numOfInputsOtherParty; j++)
+                    {
+                        for(int k = 0; k < numOfInputsRestOfParties; k++)
+                        {
+                            // process
+                            string yaoResult;
+                            vector<byte> raw_yaoResult;
+                            channel->readWithSizeIntoVector(raw_yaoResult); // TODO: Encrypt the communication
+                            const byte * uc = &(raw_yaoResult[0]);
+                            yaoResult = string(reinterpret_cast<char const *>(uc), raw_yaoResult.size());
+
+                            // save to file
+                            ofstream yaoOutputFile;
+
+                            std::string YaoOutputFileName = "results/out_party_" + to_string(i) + "_";
+                            YaoOutputFileName += "seq_" + to_string(j);
+                            YaoOutputFileName += "_otherparty_";
+                            YaoOutputFileName += to_string(restOfParties); 
+                            YaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+                            
+                            yaoOutputFile.open(YaoOutputFileName);
+                            yaoOutputFile << yaoResult;
+                            yaoOutputFile.close();
+                        }    
+                    }
+                }
+            }
+
+
+
+
+        } else if(i > partyNum) {
+
+            int myPort = ports[partyNum] + i*10 - 10;
+            int otherPort = ports[i] + partyNum*10;
+
+            
+            cout <<"RECEIVE RESULTS"<<endl;
+            me = SocketPartyData(boost_ip::address::from_string(ips[partyNum]), myPort);
+            cout<<"my port = "<<myPort<<endl;
+            other = SocketPartyData(boost_ip::address::from_string(ips[i]), otherPort);
+            cout<<"other port = "<<otherPort<<endl;
+
+            shared_ptr<CommParty> channel = make_shared<CommPartyTCPSynced>(io_service, me, other);
+            // connect to party i
+            channel->join(500, 5000);
+            cout<<"channel established"<<endl;
+
+
+            cout << "GARBLER FIRST RECEIVING..." << endl;
+            // Receive internal results
+            for(int j = 0; j < numOfInputsOtherParty; j++)
+            {
+                for(int k = j + 1; k < numOfInputsOtherParty; k++)
+                {
+                    cout << "I AM RECEIVING..." << endl;
+                    // process
+                    string yaoResult;
+                    vector<byte> raw_yaoResult;
+                    channel->readWithSizeIntoVector(raw_yaoResult); // TODO: Encrypt the communication
+                    const byte * uc = &(raw_yaoResult[0]);
+                    yaoResult = string(reinterpret_cast<char const *>(uc), raw_yaoResult.size());
+
+                    // save to file
+                    ofstream yaoOutputFile;
+
+                    std::string YaoOutputFileName = "results/out_party_" + to_string(i) + "_";
+                    YaoOutputFileName += "seq_" + to_string(j);
+                    YaoOutputFileName += "_otherparty_";
+                    YaoOutputFileName += to_string(i); 
+                    YaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+                    
+                    yaoOutputFile.open(YaoOutputFileName);
+                    yaoOutputFile << yaoResult;
+                    yaoOutputFile.close();
+                }
+            }
+
+            cout << "GARBLER SENDING INTERNAL RESULTS..." << endl;
+            // Send internal results
+            for(int j = 0; j < numOfInputs; j++)
+            {
+                for(int k = j + 1; k < numOfInputs; k++)
+                {
+
+                    std::string newYaoOutputFileName = "results/out_myseq_" + to_string(j) + "_";
+                    newYaoOutputFileName += "otherparty_";
+                    newYaoOutputFileName += to_string(partyNum); 
+                    newYaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+
+                    ifstream yaoOutput(newYaoOutputFileName);
+                    std::string yaoResult;
+                    std::getline(yaoOutput, yaoResult);
+
+                    channel->writeWithSize(yaoResult); // TODO: Encrypt the communication
+                }
+            }
+
+            cout << "GARBLER SECOND RECEIVING..." << endl;
+            // Receive rest of parties
+            for(int restOfParties = 0; restOfParties < numOfParties; restOfParties++)
+            {
+                int numOfInputsRestOfParties = this->numOfInputsOtherParties[restOfParties];
+                
+                if(restOfParties != partyNum && restOfParties != i)
+                {
+                    for(int j = 0; j < numOfInputsOtherParty; j++)
+                    {
+                        for(int k = 0; k < numOfInputsRestOfParties; k++)
+                        {
+                            // process
+                            string yaoResult;
+                            vector<byte> raw_yaoResult;
+                            channel->readWithSizeIntoVector(raw_yaoResult); // TODO: Encrypt the communication
+                            const byte * uc = &(raw_yaoResult[0]);
+                            yaoResult = string(reinterpret_cast<char const *>(uc), raw_yaoResult.size());
+
+                            // save to file
+                            ofstream yaoOutputFile;
+
+                            std::string YaoOutputFileName = "results/out_party_" + to_string(i) + "_";
+                            YaoOutputFileName += "seq_" + to_string(j);
+                            YaoOutputFileName += "_otherparty_";
+                            YaoOutputFileName += to_string(restOfParties); 
+                            YaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+
+                            cout << YaoOutputFileName << endl;
+                            
+                            yaoOutputFile.open(YaoOutputFileName);
+                            yaoOutputFile << yaoResult;
+                            yaoOutputFile.close();
+                        }    
+                    }
+                }
+            }
+
+            // send other elements
+            for(int restOfParties = 0; restOfParties < numOfParties; restOfParties++)
+            {
+                int numOfInputsRestOfParties = this->numOfInputsOtherParties[restOfParties];
+
+                if(restOfParties != partyNum && restOfParties != i)
+                {
+                    for(int j = 0; j < numOfInputs; j++)
+                    {
+                        for(int k = 0; k < numOfInputsRestOfParties; k++)
+                        {
+                        
+                            std::string newYaoOutputFileName = "results/out_myseq_" + to_string(j) + "_";
+                            newYaoOutputFileName += "otherparty_";
+                            newYaoOutputFileName += to_string(restOfParties); 
+                            newYaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+
+                            ifstream yaoOutput(newYaoOutputFileName);
+                            std::string yaoResult;
+                            std::getline(yaoOutput, yaoResult);
+
+                            channel->writeWithSize(yaoResult); // TODO: Encrypt the communication
+                        }
+                    }
+                }
+            }
+
+
+
+
+        }
+
+    }
+
+}
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //

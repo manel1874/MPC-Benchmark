@@ -39,6 +39,8 @@ public:
 
     void computeInternalHammingDistance();
 
+    void sendAndReceiveOtherDistances();
+
     //vector<vector<int>> mat(int numOfcols, vector<int>(numOfrows)); // Definir a matrix!
 
 

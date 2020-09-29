@@ -12,7 +12,6 @@ int main(int argc, char* argv[])
 {
 
     //Initialization
-
     int numOfParties = 3;
     int partyNum = atoi(argv[1]);
     int numOfInputs = atoi(argv[2]);
@@ -31,12 +30,16 @@ int main(int argc, char* argv[])
     // Send (Evaluator) or Receive (Garbler) the results from Hamming SMC
     meHamParty->evaluatorSendResultToGarbler();
 
-    
     cout << "PART 4 - INTERNAL HAMMING DISTANCE" << endl;
     // Compute internal Hamming distances
     meHamParty->computeInternalHammingDistance();
 
+    cout << "PART 5 - SEND/RECEIVE OTHER DISTANCES" << endl;
     // Send / Receive the other values
+    meHamParty->sendAndReceiveOtherDistances();
+
+    //cout << "PART 6 - COMPUTE PHYLOGENETIC TREE" << endl;
+
 
     return 0;
 
