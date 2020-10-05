@@ -10,6 +10,9 @@
 
 #include "HamParties.hpp"
 
+
+int getIndex(vector<string> v, string K);
+
 class matrixDist
 {
     private:
