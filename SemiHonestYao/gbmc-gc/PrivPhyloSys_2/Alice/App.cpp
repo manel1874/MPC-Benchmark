@@ -6,6 +6,7 @@
 #include "/home/manel/libscapi/include/infra/ConfigFile.hpp"
 
 #include "include/HamParties.hpp"
+#include "include/matrixDist.hpp"
 
 
 int main(int argc, char* argv[])
@@ -38,7 +39,8 @@ int main(int argc, char* argv[])
     // Send / Receive the other values
     meHamParty->sendAndReceiveOtherDistances();
 
-    //cout << "PART 6 - COMPUTE PHYLOGENETIC TREE" << endl;
+    cout << "PART 6 - CREATE MATRIX" << endl;
+    shared_ptr<matrixDist> myMatrixDist = make_shared<matrixDist>(meHamParty);
 
 
     return 0;
