@@ -89,9 +89,120 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                            
                         }
                     }
-                
                 }
             }
+        } else {
+
+
+            int numOfInputs = numOfInputsOtherParties[i];
+            // for each sequence
+            for(int j = 0; j < numOfInputs; j++)
+            {
+                // for each other parties
+                for(int partyNum = 0; partyNum < numOfParties; partyNum++)
+                {
+
+                    int partyNumSeq = numOfInputsOtherParties[partyNum];
+                    // for each seq of other party
+                    for(int k = 0; k < partyNumSeq; k++)
+                    {
+                        if( partyNum == i && j < k) 
+                        {
+
+                            // read from file
+                            std::string YaoOutputFileName = "results/out_party_" + to_string(i) + "_";
+                            YaoOutputFileName += "seq_" + to_string(j);
+                            YaoOutputFileName += "_otherparty_";
+                            YaoOutputFileName += to_string(partyNum); 
+                            YaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+
+                            ifstream yaoOutput(YaoOutputFileName);
+                            std::string yaoResult_string;
+                            std::getline(yaoOutput, yaoResult_string);
+
+                            int yaoResult_int;
+                            if(yaoResult_string.length() < 32)
+                            {
+                                yaoResult_int = std::stoi(yaoResult_string);
+                            } else {
+                                // convert from binary string to int
+                                yaoResult_int = std::stoi(yaoResult_string, nullptr, 2);
+                            }
+
+                            
+                            string row_str = to_string(i) + to_string(j);
+                            int row = getIndex(nodeNames, row_str);
+
+                            string column_str = to_string(partyNum) + to_string(k);
+                            int column = getIndex(nodeNames, column_str);
+                            
+                            if(row < column)
+                            {
+                                matrixDistance[row][column] = yaoResult_int;
+                                cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(row) + ", " + to_string(column) << endl;
+                            } else {
+                                matrixDistance[column][row] = yaoResult_int;
+                                cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(column) + ", " + to_string(row) << endl;
+                            } 
+                        } else if (partyNum > i)
+                        {
+                            // read from file
+                            std::string YaoOutputFileName = "results/out_party_" + to_string(i) + "_";
+                            YaoOutputFileName += "seq_" + to_string(j);
+                            YaoOutputFileName += "_otherparty_";
+                            YaoOutputFileName += to_string(partyNum); 
+                            YaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
+
+                            ifstream yaoOutput(YaoOutputFileName);
+                            std::string yaoResult_string;
+                            std::getline(yaoOutput, yaoResult_string);
+
+                            // read from file
+                            std::string YaoOutputFileName_compare = "results/out_party_" + to_string(partyNum) + "_";
+                            YaoOutputFileName_compare += "seq_" + to_string(k);
+                            YaoOutputFileName_compare += "_otherparty_";
+                            YaoOutputFileName_compare += to_string(i); 
+                            YaoOutputFileName_compare += "_otherseq_" + to_string(j) + ".txt";
+
+                            ifstream yaoOutput_compare(YaoOutputFileName_compare);
+                            std::string yaoResult_string_compare;
+                            std::getline(yaoOutput_compare, yaoResult_string_compare);
+
+                            if (yaoResult_string == yaoResult_string_compare)
+                            {
+                                int yaoResult_int;
+                                if(yaoResult_string.length() < 32)
+                                {
+                                    yaoResult_int = std::stoi(yaoResult_string);
+                                } else {
+                                    // convert from binary string to int
+                                    yaoResult_int = std::stoi(yaoResult_string, nullptr, 2);
+                                }
+
+                                
+                                string row_str = to_string(i) + to_string(j);
+                                int row = getIndex(nodeNames, row_str);
+
+                                string column_str = to_string(partyNum) + to_string(k);
+                                int column = getIndex(nodeNames, column_str);
+                                
+                                if(row < column)
+                                {
+                                    matrixDistance[row][column] = yaoResult_int;
+                                    cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(row) + ", " + to_string(column) << endl;
+                                } else {
+                                    matrixDistance[column][row] = yaoResult_int;
+                                    cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(column) + ", " + to_string(row) << endl;
+                                } 
+                            }
+                            
+
+                        }     
+                    }
+                }
+            }
+
+
         }
         // Compare if other elements are the same
     }
