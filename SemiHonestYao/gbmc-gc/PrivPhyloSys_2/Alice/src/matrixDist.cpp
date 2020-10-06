@@ -30,7 +30,7 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
 
     // for each party
     for(int i = 0; i < numOfParties; i++)
-    {
+    {   // myseq txt style
         if(id == i)
         {
             int numOfInputs = numOfInputsOtherParties[i];
@@ -61,12 +61,8 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                             int yaoResult_int;
                             if(yaoResult_string.length() < 32)
                             {
-                                cout << "here decimal" <<endl;
-                                cout << i << j << partyNum << k << endl;
-                                cout << yaoResult_string << endl;
                                 yaoResult_int = std::stoi(yaoResult_string);
                             } else {
-                                cout << "here binary" <<endl;
                                 // convert from binary string to int
                                 yaoResult_int = std::stoi(yaoResult_string, nullptr, 2);
                             }
@@ -91,7 +87,7 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                     }
                 }
             }
-        } else {
+        } else { //others!
 
 
             int numOfInputs = numOfInputsOtherParties[i];
@@ -106,7 +102,7 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                     // for each seq of other party
                     for(int k = 0; k < partyNumSeq; k++)
                     {
-                        if( partyNum == i && j < k) 
+                        if( (partyNum == i && j < k) && (partyNum != id)) // CASE : internal computation
                         {
 
                             // read from file
@@ -144,7 +140,7 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                                 matrixDistance[column][row] = yaoResult_int;
                                 cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(column) + ", " + to_string(row) << endl;
                             } 
-                        } else if (partyNum > i)
+                        } else if (partyNum != id && partyNum > i)
                         {
                             // read from file
                             std::string YaoOutputFileName = "results/out_party_" + to_string(i) + "_";
