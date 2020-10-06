@@ -1,8 +1,8 @@
 input1 = [1,1,2,2,0,0,0,0,1,3,3,2]
 
-seq_number = "seq_1.txt"
+seq_number = "seq_2.txt"
 
-filename = 'Party_2_' + seq_number
+filename = 'Party_1_' + seq_number
 
 def print_zero(filename):
     with open(filename, 'a+') as file_object:
