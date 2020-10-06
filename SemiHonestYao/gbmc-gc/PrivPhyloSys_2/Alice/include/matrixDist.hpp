@@ -22,6 +22,9 @@ class matrixDist
         matrixDist(shared_ptr<HamParty> meParty);
 
         std::vector< std::vector<float> > mD;
+        
+        vector<string> nodeNames;
+        int n;
 
 
 };

@@ -7,14 +7,22 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
     int numOfParties = meParty->numOfParties;
     vector<int> numOfInputsOtherParties = meParty->numOfInputsOtherParties;
 
-    int N = accumulate(numOfInputsOtherParties.begin(),numOfInputsOtherParties.end(),0);
+    this->n = accumulate(numOfInputsOtherParties.begin(),numOfInputsOtherParties.end(),0);
 
+    int N = 2*n - 1;
     // create empty matrix
     std::vector< std::vector<float> > matrixDistance;
     matrixDistance = std::vector< std::vector<float>>(N, std::vector<float>(N, -1.0));
 
+    // Introduce 0 in the diagonal
+    for(int i = 0; i < n; i++)
+    {
+        matrixDistance[i][i] = 0.0;
+    }
+
     // Create node names
-    vector<string> nodeNames(N, "None");
+    vector<string> nN(n, "None");
+    this->nodeNames = nN;
     
     int index_n = 0;
     for(int i = 0; i< numOfParties; i++)
@@ -58,13 +66,15 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                             std::string yaoResult_string;
                             std::getline(yaoOutput, yaoResult_string);
 
-                            int yaoResult_int;
+                            float yaoResult_float;
                             if(yaoResult_string.length() < 32)
                             {
-                                yaoResult_int = std::stoi(yaoResult_string);
+                                yaoResult_float = std::stof(yaoResult_string);
                             } else {
                                 // convert from binary string to int
+                                int yaoResult_int;
                                 yaoResult_int = std::stoi(yaoResult_string, nullptr, 2);
+                                yaoResult_float = (float) yaoResult_int;
                             }
 
                             
@@ -74,15 +84,8 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                             string column_str = to_string(partyNum) + to_string(k);
                             int column = getIndex(nodeNames, column_str);
                             
-                            if(row < column)
-                            {
-                                matrixDistance[row][column] = yaoResult_int;
-                                cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(row) + ", " + to_string(column) << endl;
-                            } else {
-                                matrixDistance[column][row] = yaoResult_int;
-                                cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(column) + ", " + to_string(row) << endl;
-                            }
-                           
+                            matrixDistance[row][column] = yaoResult_float;
+                            matrixDistance[column][row] = yaoResult_float;
                         }
                     }
                 }
@@ -116,13 +119,15 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                             std::string yaoResult_string;
                             std::getline(yaoOutput, yaoResult_string);
 
-                            int yaoResult_int;
+                            float yaoResult_float;
                             if(yaoResult_string.length() < 32)
                             {
-                                yaoResult_int = std::stoi(yaoResult_string);
+                                yaoResult_float = std::stof(yaoResult_string);
                             } else {
                                 // convert from binary string to int
+                                int yaoResult_int;
                                 yaoResult_int = std::stoi(yaoResult_string, nullptr, 2);
+                                yaoResult_float = (float) yaoResult_int;
                             }
 
                             
@@ -132,14 +137,9 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                             string column_str = to_string(partyNum) + to_string(k);
                             int column = getIndex(nodeNames, column_str);
                             
-                            if(row < column)
-                            {
-                                matrixDistance[row][column] = yaoResult_int;
-                                cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(row) + ", " + to_string(column) << endl;
-                            } else {
-                                matrixDistance[column][row] = yaoResult_int;
-                                cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(column) + ", " + to_string(row) << endl;
-                            } 
+                            matrixDistance[row][column] = yaoResult_float;
+                            matrixDistance[column][row] = yaoResult_float;
+
                         } else if (partyNum != id && partyNum > i)
                         {
                             // read from file
@@ -166,13 +166,15 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
 
                             if (yaoResult_string == yaoResult_string_compare)
                             {
-                                int yaoResult_int;
+                                float yaoResult_float;
                                 if(yaoResult_string.length() < 32)
                                 {
-                                    yaoResult_int = std::stoi(yaoResult_string);
+                                    yaoResult_float = std::stof(yaoResult_string);
                                 } else {
                                     // convert from binary string to int
+                                    int yaoResult_int;
                                     yaoResult_int = std::stoi(yaoResult_string, nullptr, 2);
+                                    yaoResult_float = (float) yaoResult_int;
                                 }
 
                                 
@@ -182,14 +184,8 @@ matrixDist::matrixDist(shared_ptr<HamParty> meParty)
                                 string column_str = to_string(partyNum) + to_string(k);
                                 int column = getIndex(nodeNames, column_str);
                                 
-                                if(row < column)
-                                {
-                                    matrixDistance[row][column] = yaoResult_int;
-                                    cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(row) + ", " + to_string(column) << endl;
-                                } else {
-                                    matrixDistance[column][row] = yaoResult_int;
-                                    cout << "Saved " + to_string(yaoResult_int) + " in place " + to_string(column) + ", " + to_string(row) << endl;
-                                } 
+                                matrixDistance[row][column] = yaoResult_float;
+                                matrixDistance[column][row] = yaoResult_float;
                             }
                             
 
