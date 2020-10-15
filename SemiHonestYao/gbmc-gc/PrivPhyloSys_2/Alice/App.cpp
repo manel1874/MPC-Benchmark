@@ -45,23 +45,23 @@ int main(int argc, char* argv[])
     // Evaluators send (Garblers reveice) the results from Hamming SMC functionality
     meHamParty->evaluatorSendResultToGarbler();
 
-    cout << "PART 1.4 - COMPUTE INTERNAL HAMMING DISTANCE" << endl;
+    cout << "PART 1.4 - COMPUTE INTERNAL HAMMING DISTANCE \n" << endl;
     // Compute internal Hamming distances
     meHamParty->computeInternalHammingDistance();
 
-    cout << "PART 1.5 - SEND/RECEIVE OTHER DISTANCES" << endl;
+    cout << "PART 1.5 - SEND/RECEIVE OTHER DISTANCES \n" << endl;
     // Send / Receive the other values
     meHamParty->sendAndReceiveOtherDistances();
 
 
-    cout << "PART 2 - CREATE HAMMING DISTANCE MATRIX" << endl;
+    cout << "PART 2 - CREATE HAMMING DISTANCE MATRIX \n" << endl;
     shared_ptr<matrixDist> myMatrixDist = make_shared<matrixDist>(meHamParty);
 
     int n = myMatrixDist->n;
     vector<vector<float>> matrixDistance = myMatrixDist->mD;
     vector<string> mNodeNames = myMatrixDist->nodeNames;
 
-    cout << "PART 3 - COMPUTE SECOND PART OF UPGMA" << endl;
+    cout << "PART 3 - COMPUTE SECOND PART OF UPGMA \n" << endl;
     GuideTree upgma_tree(n, matrixDistance, mNodeNames);
     upgma_tree.CreateTree("upgma");
 
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     upgma_tree.Output(output_upgma);
     output_upgma.close();
 
-    cout << "DONE : Result saved to phylogeneticTree folder.";
+    cout << "DONE : Result saved to phylogeneticTree folder. \n";
 
     return 0;
 

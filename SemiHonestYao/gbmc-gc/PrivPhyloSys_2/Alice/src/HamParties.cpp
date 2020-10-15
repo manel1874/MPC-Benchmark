@@ -507,7 +507,6 @@ void HamParty::sendAndReceiveOtherDistances()
                     std::getline(yaoOutput, yaoResult);
 
                     channel->writeWithSize(yaoResult); // TODO: Encrypt the communication
-                    cout << "I SENT" << endl;
                 }
             }
 
@@ -551,13 +550,10 @@ void HamParty::sendAndReceiveOtherDistances()
                     {
                         for(int k = 0; k < numOfInputsRestOfParties; k++)
                         {
-                            cout << "Inside! j= " + to_string(j) + " and k= " + to_string(k) << endl;  
                             std::string newYaoOutputFileName = "results/out_myseq_" + to_string(j) + "_";
                             newYaoOutputFileName += "otherparty_";
                             newYaoOutputFileName += to_string(restOfParties); 
                             newYaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
-
-                            cout << newYaoOutputFileName << endl;
 
                             ifstream yaoOutput(newYaoOutputFileName);
                             std::string yaoResult;
@@ -630,7 +626,6 @@ void HamParty::sendAndReceiveOtherDistances()
             {
                 for(int k = j + 1; k < numOfInputsOtherParty; k++)
                 {
-                    cout << "I AM RECEIVING..." << endl;
                     // process
                     string yaoResult;
                     vector<byte> raw_yaoResult;
@@ -700,8 +695,6 @@ void HamParty::sendAndReceiveOtherDistances()
                             YaoOutputFileName += "_otherparty_";
                             YaoOutputFileName += to_string(restOfParties); 
                             YaoOutputFileName += "_otherseq_" + to_string(k) + ".txt";
-
-                            cout << YaoOutputFileName << endl;
                             
                             yaoOutputFile.open(YaoOutputFileName);
                             yaoOutputFile << yaoResult;
