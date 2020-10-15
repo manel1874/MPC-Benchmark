@@ -61,7 +61,7 @@ HamParty::HamParty(int id, int numOfParties, int numOfInputs)
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
-//                                              SEND NUMBER OF INPUTS
+//                                              PART 1.1 - SEND NUMBER OF INPUTS
 
 
 void HamParty::runNumberOfInputs()
@@ -76,9 +76,10 @@ void HamParty::runNumberOfInputs()
     SocketPartyData me, other;
     boost::asio::io_service io_service;
 
+    // for each party
     for(int i=0; i < numOfParties; i++)
     {
-        if(i < partyNum)
+        if(i < partyNum) 
         {// Evaluator - Send result
 
             int myPort = ports[partyNum] + i*10;
@@ -151,17 +152,16 @@ void HamParty::runNumberOfInputs()
 }
 
 
+//
 
-
-
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
-//                                      RUN HAMMING SMC BETWEEN TWO PARTOES
-
+//                                      PART 1.2 - RUN HAMMING SMC BETWEEN TWO PARTOES
 
 
 void HamParty::runHamSMC()
@@ -173,6 +173,7 @@ void HamParty::runHamSMC()
     vector<int> ports = this->ports;
     vector<string> ips = this->ips;
 
+    // for each party
     for(int i=0; i < numOfParties; i++)
     {
         int numOfInputsOtherParty = this->numOfInputsOtherParties[i];
@@ -213,7 +214,8 @@ void HamParty::runHamSMC()
                     run_script += partiesFile_name;
 
                     std::cout << "Running Yao protocol between my port "<< myPort << " and other port "<< otherPort <<endl;
-                    std::system(run_script.c_str());
+                    // run ./sunSMCParty.sh
+                    std::system(run_script.c_str()); 
                     std::cout <<"Finnished Yao protocol"<<endl;
                     std::cout <<"\n"<<endl;
                     // ============================================
@@ -258,16 +260,17 @@ void HamParty::runHamSMC()
                 for(int j=0; j < numOfInputs; j++)
                 {   
                     cout << "Computing hamming distance between myseq " + to_string(j) + " and otherseq " + to_string(k) << endl;
-                    // Run Yao protocol =======
+                    // Run SMC between evaluator and garbler=======
                     std::string run_script = "./runSMCParty.sh ";
                     run_script += to_string(0);
                     run_script += " yaoConfigFiles/YaoConfig_seq_" + to_string(j) + ".txt ";
                     run_script += partiesFile_name;
                     cout << "Running Yao protocol between my port "<< myPort << " and other port "<< otherPort <<endl;
+                    // run ./sunSMCParty.sh
                     system(run_script.c_str());
                     cout <<"Finnished Yao protocol"<<endl;
                     cout <<"\n"<<endl;
-                    // ========================
+                    // ============================================
                 }
             }
 
@@ -279,11 +282,14 @@ void HamParty::runHamSMC()
 
 };
 
-//                                      RUN HAMMING SMC BETWEEN TWO PARTOES
+//                                     
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
+
+//                                      PART 1.3 - EVALUATOR SEND RESULTS TP GARBLER
 
 
 void HamParty::evaluatorSendResultToGarbler()
@@ -389,13 +395,14 @@ void HamParty::evaluatorSendResultToGarbler()
     }
 }
 
+//
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
-//                                      RUN HAMMING SMC BETWEEN TWO PARTOES
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
-
+//                                      PART 1.4 - COMPUTE INTERNAL HAMMING DISTANCE
 
 
 void HamParty::computeInternalHammingDistance()
@@ -439,12 +446,14 @@ void HamParty::computeInternalHammingDistance()
 
 }
 
+//
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
-//                                      RUN HAMMING SMC BETWEEN TWO PARTOES
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
+//                                      PART 1.5 - SEND/RECEIVE OTHER DISTANCES
 
 
 void HamParty::sendAndReceiveOtherDistances()
@@ -738,11 +747,14 @@ void HamParty::sendAndReceiveOtherDistances()
 
 }
 
+//
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
+
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 //                                                      Auxiliary functions
-
 
 
 string preprocessInput(string path)
@@ -806,3 +818,6 @@ int hammingDistance(string input_i, string input_j)
     return hamDist;
 }
 
+//
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //

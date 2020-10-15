@@ -67,6 +67,7 @@ vector< vector<float> > GuideTree::Output()
   return mTree;
 }
 
+
 void GuideTree::Upgma()
 {
   // Heigh vector
