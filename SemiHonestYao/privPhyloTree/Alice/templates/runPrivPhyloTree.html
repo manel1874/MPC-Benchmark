@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}QSMC Aveiro Intro{% endblock %}
+{% block content %}
+<h1>Quantum Secure Multiparty Computation for Genome studies</h1>
+<p>Please provide the following information in order to run the SMC protocol.</p>
+
+<form action="#" method="post">
+    <p>Party Id:</p>
+    <p><input type="text" name="partyId" /></p>
+    <p>Number of input sequences used from /inputFiles folder:</p>
+    <p><input type="text" name="nOfSeq" /></p>
+	<p><input type="submit" value="Submit & Run"/></p>
+</form>
+
+{% endblock %}
