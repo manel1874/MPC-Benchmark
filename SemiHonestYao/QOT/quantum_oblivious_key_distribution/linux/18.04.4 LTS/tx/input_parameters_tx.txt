@@ -1,0 +1,8 @@
+//------------INPUTPARAMETERS-------------
+//
+// Remote IP address that IPTunnel will try to connect to
+remoteMachineIpAddress=127.0.0.1
+// Local machine IP address
+localMachineIpAddress=127.0.0.1
+// Number of keys that are saved in the Sink (keyLenght*numberOfSector(512*100))
+numberOfSamplesToProcess=0
