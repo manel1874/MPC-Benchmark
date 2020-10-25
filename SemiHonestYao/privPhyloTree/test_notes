@@ -1,0 +1,16 @@
+Boolean Input size :: 96 bits
+
+Alice:
+- 128 OTs x 8 :: receiver
+
+
+Bob:
+- 128 OTs x 3 :: receiver
+- 128 OTs x 6 :: sender
+
+
+Charlie:
+- 128 OTs x 5 :: sender
+
+TODO: .sgn file path as variable and not hardcoded.
+
