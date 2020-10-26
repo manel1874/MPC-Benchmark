@@ -1,4 +1,4 @@
-party_0_ip = 127.0.0.1
-party_1_ip = 127.0.0.1
+party_0_ip = 192.168.81.194
+party_1_ip = 192.168.81.188
 party_0_port = 8220
 party_1_port = 8400
