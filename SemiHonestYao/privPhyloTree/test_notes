@@ -1,16 +1,23 @@
 Boolean Input size :: 96 bits
 
-Alice:
+Alice (2 inputs)
 - 128 OTs x 8 :: receiver
 
 
-Bob:
+Bob (3 inputas)
 - 128 OTs x 3 :: receiver
 - 128 OTs x 6 :: sender
 
 
-Charlie:
+Charlie (1 inputs)
 - 128 OTs x 5 :: sender
 
 TODO: .sgn file path as variable and not hardcoded.
 
+_________________
+
+
+Alice, Bob and Charlie (10 inputs)
+
+- Number of computations 30+29/2 = 435
+- Timming: ~2m25
