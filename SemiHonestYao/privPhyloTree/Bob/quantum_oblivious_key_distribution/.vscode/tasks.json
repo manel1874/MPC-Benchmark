@@ -1,0 +1,59 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "tx",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-g",
+				"${workspaceFolder}/quantum_oblivious_key_distribution_emulator_sdf.cpp",
+				"${workspaceFolder}/lib/ip_tunnel_linux_20190816.cpp",
+				"${workspaceFolder}/lib/Alice_QOKD_20190816.cpp",
+				"${workspaceFolder}/lib/Bob_QOKD_20190816.cpp",
+				"${workspaceFolder}/lib/binary_source_20190816.cpp",
+				"${workspaceFolder}/lib/netxpto_linux_20190816.cpp",
+				"${workspaceFolder}/lib/sink_20190816.cpp",
+				"-o",
+				"${fileDirname}/qokd_emulator_tx",
+				"-I",
+				"/home/zeinab/VSCode/linkplanner_smc/sdf/quantum_oblivious_key_distribution_emulator/include",
+				"-std=c++17"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "rx",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-g",
+				"${workspaceFolder}/quantum_oblivious_key_distribution_emulator_sdf.cpp",
+				"${workspaceFolder}/lib/ip_tunnel_linux_20190816.cpp",
+				"${workspaceFolder}/lib/Alice_QOKD_20190816.cpp",
+				"${workspaceFolder}/lib/Bob_QOKD_20190816.cpp",
+				"${workspaceFolder}/lib/binary_source_20190816.cpp",
+				"${workspaceFolder}/lib/netxpto_linux_20190816.cpp",
+				"${workspaceFolder}/lib/sink_20190816.cpp",
+				"-o",
+				"${fileDirname}/qokd_emulator_rx",
+				"-I",
+				"/home/zeinab/VSCode/linkplanner_smc/sdf/quantum_oblivious_key_distribution_emulator/include",
+				"-std=c++17"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		}
+	]
+}
