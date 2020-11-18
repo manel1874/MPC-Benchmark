@@ -219,8 +219,10 @@ void HamParty::runHamSMC()
                     std::cout <<"Finnished Yao protocol"<<endl;
 
                     // kill process 
-                    std::string kill_process = "kill $(sudo lsof -t -i:" + to_string(myPort) + ")";
+                    std::string kill_process = "kill $(lsof -t -i:" + to_string(myPort) + ")";
                     std::system(kill_process.c_str());
+                    std::string kill_process_obliv = "kill $(lsof -t -i:" + to_string(myPort+1) + ")";
+                    std::system(kill_process_obliv.c_str());
                     std::cout <<"Yao protocol process killed on port "<< myPort <<endl;
                     std::cout <<"\n"<<endl;
                     // ============================================
@@ -279,6 +281,8 @@ void HamParty::runHamSMC()
                     std::cout <<"kill $(lsof -t -i:"<< myPort << ")" <<endl;
                     std::string kill_process = "kill $(lsof -t -i:" + to_string(myPort) + ")";
                     std::system(kill_process.c_str());
+                    std::string kill_process_obliv = "kill $(lsof -t -i:" + to_string(myPort+1) + ")";
+                    std::system(kill_process_obliv.c_str());
                     std::cout <<"Yao protocol process killed on port "<< myPort <<endl;
                     cout <<"\n"<<endl;
                     // ============================================
