@@ -67,6 +67,7 @@
         "set": "cpp",
         "string": "cpp",
         "variant": "cpp",
-        "bit": "cpp"
+        "bit": "cpp",
+        "filesystem": "cpp"
     }
 }

@@ -217,6 +217,11 @@ void HamParty::runHamSMC()
                     // run ./sunSMCParty.sh
                     std::system(run_script.c_str()); 
                     std::cout <<"Finnished Yao protocol"<<endl;
+
+                    // kill process 
+                    std::string kill_process = "kill $(lsof -t -i:" + to_string(myPort) + ")";
+                    std::system(kill_process.c_str());
+                    std::cout <<"Yao protocol process killed on port "<< myPort <<endl;
                     std::cout <<"\n"<<endl;
                     // ============================================
 
@@ -269,6 +274,11 @@ void HamParty::runHamSMC()
                     // run ./sunSMCParty.sh
                     system(run_script.c_str());
                     cout <<"Finnished Yao protocol"<<endl;
+
+                    // kill process 
+                    std::string kill_process = "kill $(lsof -t -i:" + to_string(myPort) + ")";
+                    std::system(kill_process.c_str());
+                    std::cout <<"Yao protocol process killed on port "<< myPort <<endl;
                     cout <<"\n"<<endl;
                     // ============================================
                 }

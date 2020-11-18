@@ -5,6 +5,7 @@
     "version": "0.2.0",
     "configurations": [
     
+    
 
 
     
@@ -13,7 +14,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/SemiHonestYao",
-            "args": ["-partyID", "0",
+            "args": ["-partyID", "1",
                 "-configFile", "YaoConfig.txt",
                 "-partiesFile", "Parties",
                 "-internalIterationsNumber", "1"],
