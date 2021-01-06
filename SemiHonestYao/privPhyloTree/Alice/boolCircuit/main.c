@@ -1,4 +1,4 @@
-#define LEN_SEQ 1000
+#define LEN_SEQ 8000
 
 typedef unsigned char uint8_t;
 
