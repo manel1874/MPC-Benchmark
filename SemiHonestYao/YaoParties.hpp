@@ -57,8 +57,10 @@
 
 #undef AES_KEY
 #include <thread>
-#include <libscapi/include/infra/Scanner.hpp>
-#include <libscapi/include/infra/ConfigFile.hpp>
+#include <qlibscapi/include/infra/Scanner.hpp>
+#include <qlibscapi/include/infra/ConfigFile.hpp>
+//#include <libscapi/include/infra/Scanner.hpp>
+//#include <libscapi/include/infra/ConfigFile.hpp>
 
 
 
